@@ -1,15 +1,19 @@
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
+import sendUsersDataInBackend from "../../hooks/sendUsersDataInBackend";
 import GoogleGithubAuth from "../GoogleGithubAuth/GoogleGithubAuth";
+import OnProcessing from "../OnProcessing/OnProcessing";
 // import useSendUsersDataInBackend from "../../hooks/useSendUsersDataInBackend";
 // import GoogleGithubAuth from "../../shared/GoogleGithubAuth/GoogleGithubAuth";
 const Register = () => {
   const { createUser, updateUserProfile } = useContext(AuthContext);
   const [isHide, setIsHide] = useState(true);
-  //   const navigate = useNavigate();
-  //   const [sendUsersDataInBackend, loading] = useSendUsersDataInBackend();
+  const [isLoading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -19,11 +23,11 @@ const Register = () => {
   const password = watch("password");
   const confirmPassword = watch("confirmPassword");
   const passwordsMatch = password === confirmPassword;
-
   const img_token = import.meta.env.VITE_IMG_UPLOAD_TOKEN;
 
   const img_api_url = `https://api.imgbb.com/1/upload?key=${img_token}`;
   const onSubmit = (data) => {
+    setLoading(true);
     console.log(data);
     const formData = new FormData();
     formData.append("image", data.photo[0]);
@@ -55,21 +59,40 @@ const Register = () => {
                     role,
                   };
                   console.log(userNewData);
-// TODO: send dat to db 
+                  sendUsersDataInBackend(userNewData).then((res) => {
+                    if (res.data.insertedId) {
+                      setLoading(false);
+                      Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Registration success!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                      });
+                      navigate("/");
+                    }
+                  });
                 })
                 .catch((err) => {
+                  setLoading(false);
                   console.log(err);
                 });
             }
+          })
+          .catch((err) => {
+            setLoading(false);
+            console.log(err);
           });
       })
       .catch((err) => {
-        alert(err);
+        setLoading(false);
+        console.log(err);
       });
   };
 
   return (
-    <div className="bg-gray-200 relative h-full min-h-screen ">
+    <div className="bg-gray-200 relative h-full min-h-screen">
+      {isLoading && <OnProcessing />}
       <div className="p-8 lg:w-1/2 mx-auto max-w-xl">
         <GoogleGithubAuth title={"Sign up with"} />
         <div className="bg-gray-100 rounded-b-lg py-12 px-4 lg:px-24 ">

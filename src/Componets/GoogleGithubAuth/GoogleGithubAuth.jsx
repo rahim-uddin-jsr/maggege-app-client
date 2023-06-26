@@ -2,11 +2,12 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
+import sendUsersDataInBackend from "../../hooks/sendUsersDataInBackend";
 
 const GoogleGithubAuth = ({ title }) => {
   const { loginWithGoogle, loginWithGithub } = useContext(AuthContext);
   const navigate = useNavigate();
-  const handleGoogleSignin = () => {
+  const handleGoogleSignIn = () => {
     loginWithGoogle()
       .then((result) => {
         const currentUser = result?.user;
@@ -20,18 +21,28 @@ const GoogleGithubAuth = ({ title }) => {
           gender: null,
           phone: null,
         };
-        console.log(userInfo);
+        sendUsersDataInBackend(userInfo).then((res) => {
+          if (res.data.insertedId) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "login success",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            navigate("/");
+          }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
         Swal.fire({
           position: "center",
-          icon: "success",
-          title: "login success",
+          icon: "error",
+          title: "Something went wrong",
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate("/");
-      })
-      .catch((err) => {
-        alert(err);
       });
   };
   const handleGithubSignIN = () => {
@@ -50,18 +61,28 @@ const GoogleGithubAuth = ({ title }) => {
           phone: null,
         };
         console.log(userInfo);
-        // sendUsersDataInBackend(userInfo);
+        sendUsersDataInBackend(userInfo).then((res) => {
+          if (res.data.insertedId) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "login success",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            navigate("/");
+          }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
         Swal.fire({
           position: "center",
-          icon: "success",
-          title: "login success",
+          icon: "error",
+          title: "Something went wrong",
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate("/");
-      })
-      .catch((err) => {
-        alert(err);
       });
   };
   return (
@@ -93,7 +114,7 @@ const GoogleGithubAuth = ({ title }) => {
             Github{" "}
           </button>{" "}
           <button
-            onClick={handleGoogleSignin}
+            onClick={handleGoogleSignIn}
             className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-transparent hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
           >
             {" "}
