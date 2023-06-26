@@ -41,8 +41,11 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
+
       console.log(currentUser);
       if (currentUser) {
+        setLoading(true);
         axios
           .post("http://localhost:5000/jwt", {
             uid: currentUser?.uid,
@@ -58,7 +61,7 @@ const AuthProvider = ({ children }) => {
       // TODO : JWT secure
     });
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
   const authInfo = {
     createUser,
     loginWithEmail,

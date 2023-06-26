@@ -5,10 +5,18 @@ import Home from "./Componets/Home/Home.jsx";
 import Login from "./Componets/Login/Login.jsx";
 import Register from "./Componets/Register/Register.jsx";
 import AuthProvider from "./Context/AuthProvider/AuthProvider.jsx";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
 import "./index.css";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
+  },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
 ]);
