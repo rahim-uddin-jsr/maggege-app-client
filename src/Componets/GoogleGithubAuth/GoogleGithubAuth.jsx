@@ -14,15 +14,15 @@ const GoogleGithubAuth = ({ title }) => {
         const { displayName: name, photoURL: photo, email } = currentUser;
         console.log(name, photo, email);
         const userInfo = {
+          uid: currentUser.uid,
           name,
           photo,
           email,
-          role: "student",
           gender: null,
           phone: null,
         };
         sendUsersDataInBackend(userInfo).then((res) => {
-          if (res.data.insertedId) {
+          if (res?.data?.insertedId || res.data?.exist) {
             Swal.fire({
               position: "center",
               icon: "success",
@@ -53,10 +53,10 @@ const GoogleGithubAuth = ({ title }) => {
         const { displayName: name, photoURL: photo, email } = currentUser;
         console.log(name, photo, email);
         const userInfo = {
+          uid: currentUser.uid,
           name,
           photo,
           email,
-          role: "student",
           gender: null,
           phone: null,
         };

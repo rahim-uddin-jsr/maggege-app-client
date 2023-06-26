@@ -1,4 +1,5 @@
 // import axios from "axios";
+import axios from "axios";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -41,6 +42,19 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       console.log(currentUser);
+      if (currentUser) {
+        axios
+          .post("http://localhost:5000/jwt", {
+            uid: currentUser?.uid,
+          })
+          .then((res) => {
+            console.log({ res });
+            localStorage.setItem("access_token", res.data.token);
+            setLoading(false);
+          });
+      } else {
+        localStorage.removeItem("access_token");
+      }
       // TODO : JWT secure
     });
     return () => unsubscribe();

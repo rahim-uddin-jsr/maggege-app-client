@@ -9,7 +9,7 @@ import OnProcessing from "../OnProcessing/OnProcessing";
 // import useSendUsersDataInBackend from "../../hooks/useSendUsersDataInBackend";
 // import GoogleGithubAuth from "../../shared/GoogleGithubAuth/GoogleGithubAuth";
 const Register = () => {
-  const { createUser, updateUserProfile } = useContext(AuthContext);
+  const { createUser, updateUserProfile, user } = useContext(AuthContext);
   const [isHide, setIsHide] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -51,6 +51,7 @@ const Register = () => {
                   data.role = "student";
                   const { name, photo, phone, gender, email, role } = data;
                   const userNewData = {
+                    uid: user?.uid,
                     name,
                     photo,
                     phone,
