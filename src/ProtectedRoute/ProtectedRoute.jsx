@@ -5,6 +5,7 @@ import { AuthContext } from "../Context/AuthProvider/AuthProvider";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
+  
   if (loading) {
     return <OnProcessing />;
   }

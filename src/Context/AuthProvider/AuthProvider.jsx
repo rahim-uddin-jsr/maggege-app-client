@@ -49,16 +49,20 @@ const AuthProvider = ({ children }) => {
         axios
           .post("http://localhost:5000/jwt", {
             uid: currentUser?.uid,
+            userName: currentUser?.displayName,
+            photoURL: currentUser?.photoURL,
           })
           .then((res) => {
             console.log({ res });
             localStorage.setItem("access_token", res.data.token);
+            document.cookie = "token=" + res.data.token;
             setLoading(false);
           });
       } else {
         localStorage.removeItem("access_token");
+        document.cookie =
+          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       }
-      // TODO : JWT secure
     });
     return () => unsubscribe();
   }, [auth]);

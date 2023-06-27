@@ -1,14 +1,39 @@
+import { useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
 import NavigationBar from "../NavigationBar/NavigationBar";
 import SideBar from "../SideBar/SideBar";
 
 const Home = () => {
+  const { user } = useContext(AuthContext);
+  const [ws, setWs] = useState(null);
+  const [onlinePeople, setOnlinePeople] = useState({});
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:5000");
+    setWs(ws);
+    ws.addEventListener("message", handleMassage);
+  }, [user]);
+  const showOnlinePeople = (peopleArray) => {
+    const uniquePeople = Array.from(
+      new Set(peopleArray.map((person) => person.userId))
+    ).map((userId) => {
+      return peopleArray.find((person) => person.userId === userId);
+    });
+    setOnlinePeople(uniquePeople);
+  };
+  const handleMassage = (e) => {
+    const massagesData = JSON.parse(e.data);
+    if ("online" in massagesData) {
+      showOnlinePeople(massagesData.online);
+    }
+  };
+  console.log(onlinePeople);
   return (
-    <>
+    <div className="h-screen">
       <NavigationBar />
-      <div className="flex min-h-screen h-full">
-        <div className="w-[20%]  border-0 border-r-2">
-          <SideBar />
+      <div className="flex">
+        <div className="w-[20%] h-screen border-0 border-r-2">
+          <SideBar onlinePeople={onlinePeople} />
         </div>
         <div className="flex-grow  bg-gray-200">
           <div className="w-full h-full">
@@ -19,7 +44,7 @@ const Home = () => {
               <div className="join w-full h-14 sticky bottom-5">
                 <input
                   className="input input-bordered join-item w-full"
-                  placeholder="your text here"
+                  placeholder="Type your text here"
                 />
                 <button className="btn join-item rounded-r-full">
                   <svg
@@ -42,7 +67,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
