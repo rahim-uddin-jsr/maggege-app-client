@@ -7,6 +7,7 @@ import Login from "./Componets/Login/Login.jsx";
 import Massages from "./Componets/Massages/Massages.jsx";
 import Register from "./Componets/Register/Register.jsx";
 import AuthProvider from "./Context/AuthProvider/AuthProvider.jsx";
+import MassageProvider from "./Context/MassageProvider/MassageProvider.jsx";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
 import "./index.css";
 const queryClient = new QueryClient();
@@ -16,7 +17,9 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <ProtectedRoute>
-        <Home />
+        <MassageProvider>
+          <Home />
+        </MassageProvider>
       </ProtectedRoute>
     ),
     children: [{ path: "massages/:id", element: <Massages /> }],
