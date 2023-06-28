@@ -1,9 +1,10 @@
 import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
 import { WsContext } from "../../Context/MassageProvider/MassageProvider";
 
 const Massages = () => {
-  const { selectedUserId } = useContext(WsContext);
-
+  const { selectedUserId, messagesUnic } = useContext(WsContext);
+  const { user } = useContext(AuthContext);
   return (
     <>
       {!selectedUserId && (
@@ -13,7 +14,33 @@ const Massages = () => {
           </div>
         </div>
       )}
-      {selectedUserId && <div className="bg-slate-500">massages</div>}
+      {!!selectedUserId && (
+        <div className="">
+          {messagesUnic.map((massage, idx) => (
+            <div
+              key={idx}
+              className={` chat ${
+                massage.recipient !== user.id ? "chat-end" : "chat-start"
+              }`}
+            >
+              <div className="chat-image avatar">
+                <div className="w-10 rounded-full">
+                  {/* <img src="/images/stock/photo-1534528741775-53994a69daeb.jpg" /> */}
+                </div>
+              </div>
+              <div
+                className={` chat-bubble ${
+                  massage.recipient !== user.id
+                    ? "  bg-blue-400"
+                    : "bg-slate-100 text-black"
+                }`}
+              >
+                {massage.text}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };
